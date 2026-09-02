@@ -4,7 +4,7 @@ from rest_framework_nested import routers
 from . import views
 
 urlpatterns = [
-    path('afa-projects-new/',views.ProjectAndFilesViewSet.as_view()),
+    path('afa-projects-new/',views.ImportProjectView.as_view()),
     path('afa-projects/<afa_id>/', views.ProjectAFAView.as_view()),
     path('phasors/<int:id>/', views.PhasorView.as_view()),
     path('harmonics/<int:id>/<int:start>/<int:end>/<int:src>/', views.HarmonicsView.as_view()),
@@ -12,6 +12,8 @@ urlpatterns = [
     path('dsignals/<int:id>/<int:src>/', views.DigitalSignalView.as_view()),
     path('resample/<int:id>/<int:fsnew>/', views.ResampleView.as_view()),
     path('resamplephasors/<int:id>/', views.ResamplePhasorView.as_view()),
+    path('channels/<int:id>/', views.ProjectChannelslView.as_view()),
+    path('update-channels/<int:id>/', views.UpdateChannelsView.as_view()),
 ]
 
 router = routers.DefaultRouter()
@@ -30,6 +32,7 @@ urlpatterns += router.urls + projects_router.urls + files_router.urls
 # -----------
 # http://127.0.0.1:8000/comtrade_reader/projects/
 # http://127.0.0.1:8000/comtrade_reader/projects/1/
+# http://127.0.0.1:8000/comtrade_reader/projects/1/files/
 # http://127.0.0.1:8000/comtrade_reader/projects/1/files/
 # http://127.0.0.1:8000/comtrade_reader/projects/1/files/1/
 # http://127.0.0.1:8000/comtrade_reader/afa-projects/dummy_1/
@@ -50,3 +53,6 @@ urlpatterns += router.urls + projects_router.urls + files_router.urls
 # http://127.0.0.1:8000/comtrade_reader/dsignals/<file_id>/
 # http://127.0.0.1:8000/comtrade_reader/resample/<project_id>/<new_sampling_rate>/
 # http://127.0.0.1:8000/comtrade_reader/resamplephasors/<project_id>/
+
+# http://127.0.0.1:8000/comtrade_reader/channels/<project_id>/
+

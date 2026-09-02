@@ -43,7 +43,7 @@ class CreateFileSerializer(serializers.ModelSerializer):
             # READ COMTRADE FILE
             comtrade = ReadComtrade(cfg_file=cfg_file, 
                                     dat_file=dat_file)
-            # GET CHANNEL INFORMATION
+            # GET GENERAL INFORMATION
             [file_info, _, _] = comtrade.read_comtrade_config_data()
             
             file.station_name = file_info["station_name"]
@@ -322,4 +322,54 @@ class DigitalSignalSerializer(serializers.ModelSerializer):
         model = DigitalSignal
         fields =['time_signal', 'd1_signal', 'd2_signal', 'd3_signal', 'd4_signal', 'd5_signal', 'd6_signal', 'd7_signal', 'd8_signal', 'd9_signal', 'd10_signal', 'd11_signal', 'd12_signal', 'file']
         
+class ImportProjectSerializer(serializers.Serializer):
+   
+    project_name = serializers.CharField(max_length=50)
+    afa_case_id = serializers.CharField(max_length=10)
+    line_name = serializers.CharField(max_length=20)
+    no_of_terminals = serializers.IntegerField(min_value=2, default=2)
     
+class CreateImportFileSerializer(serializers.ModelSerializer):  
+    class Meta:
+        model = File
+        fields = ['file_id', 'cfg_file', 'dat_file']
+    
+    def create(self, validated_data):       
+        with transaction.atomic(): 
+            # SAVE FILES
+            cfg_file = str(validated_data['cfg_file'])
+            dat_file = str(validated_data['dat_file'])      
+            file = File(**validated_data)
+            file.project_id = self.context['project_id']
+            file.save()
+            # print("File saved")
+            
+            cfg_file = settings.MEDIA_ROOT + "/" + str(file.cfg_file)
+            dat_file = settings.MEDIA_ROOT + "/" + str(file.dat_file)
+            
+            # READ COMTRADE FILE
+            comtrade = ReadComtrade(cfg_file=cfg_file, 
+                                    dat_file=dat_file)
+            # GET GENERAL INFORMATION
+            [file_info, _, _] = comtrade.read_comtrade_config_data()
+            
+            file.station_name = file_info["station_name"]
+            file.analog_channel_count = file_info["analog_channel_count"]
+            file.digital_channel_count = file_info["digital_channel_count"]
+            file.start_time_stamp = datetime.fromisoformat(str(file_info ["start_time_stamp"]))
+            file.trigger_time_stamp = datetime.fromisoformat(str(file_info["trigger_time_stamp"]))
+            file.line_frequency = file_info["line_frequency"]
+            file.resampled_frequency = 0
+            
+            [_, time_values,_] = comtrade.read_comtrade_analog_signals()
+            fs = (1/(time_values[1]-time_values[0]))
+            file.sampling_frequency = fs
+            
+            file.save()    
+
+            
+            return file
+        
+        
+        
+       
