@@ -208,7 +208,7 @@ class CreateFileSerializer(serializers.ModelSerializer):
 class CreateProjectWithFilesSerializer(serializers.Serializer):
     project_id = serializers.IntegerField(read_only=True)
     afa_case_id = serializers.CharField(max_length=10)
-    line_name = serializers.CharField(max_length=20)
+    line_name = serializers.CharField(max_length=255)
     no_of_terminals = serializers.IntegerField(min_value=2, default=2)
     files = SimpleFileSerializer(many=True, read_only=True)
     
@@ -324,9 +324,9 @@ class DigitalSignalSerializer(serializers.ModelSerializer):
         
 class ImportProjectSerializer(serializers.Serializer):
    
-    project_name = serializers.CharField(max_length=50)
+    project_name = serializers.CharField(max_length=255)
     afa_case_id = serializers.CharField(max_length=10)
-    line_name = serializers.CharField(max_length=20)
+    line_name = serializers.CharField(max_length=255)
     no_of_terminals = serializers.IntegerField(min_value=2, default=2)
     
 class CreateImportFileSerializer(serializers.ModelSerializer):  

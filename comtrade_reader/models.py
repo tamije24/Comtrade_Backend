@@ -7,9 +7,9 @@ from django.core.validators import MinValueValidator, FileExtensionValidator
 
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
-    project_name = models.CharField(max_length=50)
+    project_name = models.CharField(max_length=255)
     afa_case_id = models.CharField(max_length=10)
-    line_name = models.CharField(max_length=20)
+    line_name = models.CharField(max_length=255)
     favorite = models.BooleanField(default=False)
     no_of_terminals = models.PositiveSmallIntegerField(
         default=2, 
